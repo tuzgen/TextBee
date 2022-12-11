@@ -3,11 +3,12 @@ import { useState } from "react"
 import { OffcanvasBody } from "react-bootstrap"
 import Button from "react-bootstrap/Button"
 import Offcanvas from "react-bootstrap/Offcanvas"
-import Badge from 'react-bootstrap/Badge';
+import Badge from "react-bootstrap/Badge"
 import "./HomePage.css"
 import io from "socket.io-client"
 import ChatPreviews from "./ChatPreviews"
 import SpeechBubbleReceived from "../Components/SpeechBubbleOther"
+import Cookies from "universal-cookie"
 
 import ChatBarPrivate from "../Components/ChatBarPrivate"
 import ChatBarGroup from "../Components/ChatBarGroup"
@@ -15,7 +16,7 @@ import ChatCardHeader from "../Components/ChatCardHeader"
 import SpeechBubbleSent from "../Components/SpeechBubbleSent"
 
 const connection = io("http://localhost:3001")
-var id = -1
+const { username, token } = new Cookies().getAll()
 
 connection.on("connect", (socket) => {
 	console.log("Connected!")
@@ -31,20 +32,19 @@ function HomePage() {
 
 	function onMessageSend(e) {
 		e.preventDefault()
-		console.log("gonderiyo")
-		connection.emit("messageSent", { sender: id, message: typingMessage })
+		// send message
+		const data = { sender: username, message: typingMessage }
+		setMessages([...messages, data])
+		connection.emit("messageSent", data)
+		setTypingMessage("")
 	}
 
-	connection.on("assignId", (_id) => {
-		id = _id
-	})
-
 	connection.on("userConnected", (socket) => {
-		setMessages([...messages, { sender: -1, message: "new connection" }])
+		setMessages([...messages, { sender: "server", message: "new connection" }])
 	})
 
+	// receive message
 	connection.on("messageSent", (data) => {
-		console.log("hoop")
 		setMessages([...messages, data])
 	})
 
@@ -53,7 +53,7 @@ function HomePage() {
 			<Button className="btn-show-chats" variant="primary" onClick={() => setOffcanvasVisible(true)}>
 				Show Chats {''} <Badge bg="success">1</Badge>
 			</Button>
-      <hr/>
+			<hr />
 
 		<ChatCardHeader></ChatCardHeader>
 	  <SpeechBubbleReceived/>
@@ -63,12 +63,16 @@ function HomePage() {
 				<Offcanvas.Header closeButton>
 					<Offcanvas.Title>Disturd 💩</Offcanvas.Title>
 				</Offcanvas.Header>
-        <OffcanvasBody>
-		<div style={{display:'flex', gap:'10px'}}><ChatBarPrivate/> <ChatBarGroup/></div>
-		<hr/>
+				<OffcanvasBody>
+					<div style={{ display: "flex", gap: "10px" }}>
+						<ChatBarPrivate /> <ChatBarGroup />
+					</div>
+					<hr />
 
-        <div style={{display:'flex'}}><ChatPreviews></ChatPreviews></div>
-        </OffcanvasBody>
+					<div style={{ display: "flex" }}>
+						<ChatPreviews></ChatPreviews>
+					</div>
+				</OffcanvasBody>
 			</Offcanvas>
 			<ul id="messages">
 				{messages.map((message) => (
@@ -76,7 +80,7 @@ function HomePage() {
 				))}
 			</ul>
 			<form id="form" action="" onSubmit={onMessageSend}>
-				<input id="input" onChange={(e) => setTypingMessage(e.target.value)} autoComplete="off" />
+				<input id="input" value={typingMessage} onChange={(e) => setTypingMessage(e.target.value)} autoComplete="off" />
 				<button>Send</button>
 			</form>
 		</div>

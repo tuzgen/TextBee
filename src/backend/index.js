@@ -1,50 +1,37 @@
-
-const express = require('express');
-const app = express();
-const http = require('http');
-const { Server } = require('socket.io')
-const cors = require("cors");
-const { log } = require('console');
-const { isBoxedPrimitive } = require('util/types');
-
-var lastId = 0
+const express = require("express")
+const app = express()
+const http = require("http")
+const { Server } = require("socket.io")
+const cors = require("cors")
+const { log } = require("console")
+const { isBoxedPrimitive } = require("util/types")
 
 app.use(cors())
 
-app.use('/login', (req, res) => {
-  res.send({
-    token: 'test123'
-  });
-});
-
-const server = http.createServer(app);
-
+const server = http.createServer(app)
 
 //Frontend on origin: "http://localhost:3000"
 const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
+	cors: {
+		origin: "http://localhost:3000",
+		methods: ["GET", "POST"],
+	},
 })
 
-app.get('/', (req, res) => {
-  res.send('<h1>Hello world</h1>');
-});
+app.get("/", (req, res) => {
+	res.send("<h1>Hello world</h1>")
+})
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-  socket.emit("assignId", lastId)
-  lastId++
+	console.log(`User connected: ${socket.id}`)
 
-  socket.broadcast.emit("userConnected")
+	socket.broadcast.emit("userConnected")
 
-  socket.on("messageSent", (args) => {
-    console.log("geldi", args)
-    socket.broadcast.emit("messageSent", args)
-  })
+	socket.on("messageSent", (args) => {
+		socket.broadcast.emit("messageSent", args)
+	})
 })
 
 server.listen(3001, () => {
-  console.log('listening on *:3001');
-});
+	console.log("listening on *:3001")
+})

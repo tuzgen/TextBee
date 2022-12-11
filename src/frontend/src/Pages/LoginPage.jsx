@@ -1,61 +1,76 @@
-import React, {useState} from 'react'
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import "./LoginPage.css";
-import PropTypes from 'prop-types';
+import React, { useState } from "react"
+import Button from "react-bootstrap/Button"
+import Form from "react-bootstrap/Form"
+import Cookies from "universal-cookie"
+import "./LoginPage.css"
+import PropTypes from "prop-types"
+import { useEffect } from "react"
 
+const cookies = new Cookies()
 
-function LoginPage({setToken}) {
+function LoginPage({ setToken }) {
+	const [username, setUsername] = useState("")
+	const [password, setPassword] = useState("")
 
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
+	useEffect(() => {
+		const token = cookies.get("token")
+		if (token) {
+			setToken(token)
+		}
+	}, [setToken])
 
-    async function loginUser(credentials) {
-        return fetch('http://localhost:3001/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(credentials)
-        })
-          .then(data => data.json())
-       }
+	const handleSubmit = (e) => {
+		e.preventDefault()
 
-       const handleSubmit = async e => {
-        e.preventDefault();
-        const token = await loginUser({
-          username,
-          password
-        });
-        setToken(token);
-      }
+		fetch("http://localhost:3004/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				username,
+				password,
+			}),
+		})
+			.then((res) => {
+				try {
+					if (res.status >= 400) throw new Error("error returned")
+					return res.json()
+				} catch (error) {
+					console.log(error)
+				}
+			})
+			.then((token) => {
+				cookies.set("token", token.token)
+				cookies.set("username", username)
+				setToken(token.token)
+			})
+	}
 
-    return (
+	return (
+		<div>
+			<Form onSubmit={handleSubmit} className="login-form">
+				<h1 className="login-header"> Login to Disturd</h1>
+				<Form.Group className="mb-3">
+					<Form.Label>Username</Form.Label>
+					<Form.Control onChange={(e) => setUsername(e.target.value)} placeholder="Enter username" />
+				</Form.Group>
 
-        <div>
-        <Form onSubmit={handleSubmit} className='login-form'>
-        <h1 className='login-header'> Login to Chat App </h1> 
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control onChange={e => setUsername(e.target.value)} type="email" placeholder="Enter email" />
-          </Form.Group>
-    
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control onChange={e => setUsername(e.target.value)} type="password" placeholder="Password" />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCheckbox">
-          </Form.Group>
-          <Button  variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>
-        </div>
-      );
+				<Form.Group className="mb-3" controlId="formBasicPassword">
+					<Form.Label>Password</Form.Label>
+					<Form.Control onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
+				</Form.Group>
+				<Form.Group className="mb-3" controlId="formBasicCheckbox"></Form.Group>
+				<Button variant="primary" type="submit">
+					Submit
+				</Button>
+			</Form>
+		</div>
+	)
 }
 
 LoginPage.propTypes = {
-    setToken: PropTypes.func.isRequired
+	setToken: PropTypes.func.isRequired,
 }
 
 export default LoginPage
