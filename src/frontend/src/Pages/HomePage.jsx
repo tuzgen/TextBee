@@ -3,7 +3,7 @@ import { useState } from "react"
 import { OffcanvasBody } from "react-bootstrap"
 import Button from "react-bootstrap/Button"
 import Offcanvas from "react-bootstrap/Offcanvas"
-import Badge from 'react-bootstrap/Badge';
+import Badge from "react-bootstrap/Badge"
 import "./HomePage.css"
 import io from "socket.io-client"
 import ChatPreviews from "./ChatPreviews"
@@ -26,8 +26,11 @@ function HomePage() {
 
 	function onMessageSend(e) {
 		e.preventDefault()
-		console.log("gonderiyo")
-		connection.emit("messageSent", { sender: id, message: typingMessage })
+		// send message
+		const data = { sender: id, message: typingMessage }
+		setMessages([...messages, data])
+		connection.emit("messageSent", data)
+		setTypingMessage("")
 	}
 
 	connection.on("assignId", (_id) => {
@@ -38,30 +41,34 @@ function HomePage() {
 		setMessages([...messages, { sender: -1, message: "new connection" }])
 	})
 
+	// receive message
 	connection.on("messageSent", (data) => {
-		console.log("hoop")
 		setMessages([...messages, data])
 	})
 
 	return (
 		<div>
 			<Button className="btn-show-chats" variant="outline-primary" onClick={() => setOffcanvasVisible(true)}>
-				Show Chats {''} <Badge bg="success">1</Badge>
+				Show Chats {""} <Badge bg="success">1</Badge>
 			</Button>
-      <hr/>
+			<hr />
 
-      <SpeechBubble></SpeechBubble>
-      
-			<Offcanvas  show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
+			<SpeechBubble></SpeechBubble>
+
+			<Offcanvas show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
 				<Offcanvas.Header closeButton>
 					<Offcanvas.Title>Disturd 💩</Offcanvas.Title>
 				</Offcanvas.Header>
-        <OffcanvasBody>
-		<div style={{display:'flex', gap:'10px'}}><ChatBarPrivate/> <ChatBarGroup/></div>
-		<hr/>
+				<OffcanvasBody>
+					<div style={{ display: "flex", gap: "10px" }}>
+						<ChatBarPrivate /> <ChatBarGroup />
+					</div>
+					<hr />
 
-        <div style={{display:'flex'}}><ChatPreviews></ChatPreviews></div>
-        </OffcanvasBody>
+					<div style={{ display: "flex" }}>
+						<ChatPreviews></ChatPreviews>
+					</div>
+				</OffcanvasBody>
 			</Offcanvas>
 			<ul id="messages">
 				{messages.map((message) => (
@@ -69,7 +76,7 @@ function HomePage() {
 				))}
 			</ul>
 			<form id="form" action="" onSubmit={onMessageSend}>
-				<input id="input" onChange={(e) => setTypingMessage(e.target.value)} autoComplete="off" />
+				<input id="input" value={typingMessage} onChange={(e) => setTypingMessage(e.target.value)} autoComplete="off" />
 				<button>Send</button>
 			</form>
 		</div>

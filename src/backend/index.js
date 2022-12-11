@@ -40,7 +40,6 @@ io.on("connection", (socket) => {
   socket.broadcast.emit("userConnected")
 
   socket.on("messageSent", (args) => {
-    console.log("geldi", args)
     socket.broadcast.emit("messageSent", args)
   })
 })
