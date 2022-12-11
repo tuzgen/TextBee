@@ -24,7 +24,6 @@ function App() {
    <Router>
     <Routes>
       <Route path="/home" element={<HomePage/>} />
-
     </Routes>
    </Router>
 

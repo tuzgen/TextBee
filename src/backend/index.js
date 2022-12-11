@@ -7,6 +7,8 @@ const cors = require("cors");
 const { log } = require('console');
 const { isBoxedPrimitive } = require('util/types');
 
+var lastId = 0
+
 app.use(cors())
 
 app.use('/login', (req, res) => {
@@ -30,12 +32,16 @@ app.get('/', (req, res) => {
 
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
+  socket.emit("assignId", lastId)
+  lastId++
 
   socket.broadcast.emit("userConnected")
-})
 
-// io.on("messageSent", (socket) => {
-// })
+  socket.on("messageSent", (args) => {
+    console.log("geldi", args)
+    socket.broadcast.emit("messageSent", args)
+  })
+})
 
 server.listen(3001, () => {
   console.log('listening on *:3001');
