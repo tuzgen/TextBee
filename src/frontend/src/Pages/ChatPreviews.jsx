@@ -3,13 +3,13 @@ import React from 'react'
 
 function ChatPreviews() {
     return (
-        <div >
+        <div style={{width:'100rem'}}>
     
-        <ul style={{marginTop:'10px', gap:'1rem', listStyle:'none', display:'flex', flexDirection:'column'}}>
+        <div style={{marginTop:'10px', gap:'5px', listStyle:'none', display:'flex', flexDirection:'column'}}>
           <ChatCard name='Alper' message='Ceyda seri'></ChatCard>
           <ChatCard name='Ece' message='Ceyda acil gel'></ChatCard>
           <ChatCard name='Oğuz' message='gec kalma sakin'></ChatCard>
-          </ul>
+          </div>
           
     
         </div>

@@ -1,9 +1,11 @@
 import React from "react"
 import { useState } from "react"
+import { OffcanvasBody } from "react-bootstrap"
 import Button from "react-bootstrap/Button"
 import Offcanvas from "react-bootstrap/Offcanvas"
 
 import io from "socket.io-client"
+import ChatPreviews from "./ChatPreviews"
 
 const connection = io("http://localhost:3001")
 var id = -1
@@ -46,6 +48,9 @@ function HomePage() {
 				<Offcanvas.Header closeButton>
 					<Offcanvas.Title>Disturd 💩</Offcanvas.Title>
 				</Offcanvas.Header>
+        <OffcanvasBody>
+        <div style={{display:'flex'}}><ChatPreviews></ChatPreviews></div>
+        </OffcanvasBody>
 			</Offcanvas>
 			<ul id="messages">
 				{messages.map((message) => (
