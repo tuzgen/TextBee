@@ -10,6 +10,7 @@ import { useState } from 'react';
 import LoginPage from './Pages/LoginPage';
 import HomePage from './Pages/HomePage';
 import ChatPreviews from './Pages/ChatPreviews';
+import * as ElasticAppSearch from "@elastic/app-search-javascript";
 
 function App() {
 
