@@ -7,10 +7,12 @@ import Badge from 'react-bootstrap/Badge';
 import "./HomePage.css"
 import io from "socket.io-client"
 import ChatPreviews from "./ChatPreviews"
-import SpeechBubble from "../Components/SpeechBubbleOther"
+import SpeechBubbleReceived from "../Components/SpeechBubbleOther"
 
 import ChatBarPrivate from "../Components/ChatBarPrivate"
 import ChatBarGroup from "../Components/ChatBarGroup"
+import ChatCardHeader from "../Components/ChatCardHeader"
+import SpeechBubbleSent from "../Components/SpeechBubbleSent"
 
 const connection = io("http://localhost:3001")
 var id = -1
@@ -20,6 +22,9 @@ connection.on("connect", (socket) => {
 })
 
 function HomePage() {
+
+
+
 	const [offcanvasVisible, setOffcanvasVisible] = useState(false)
 	const [messages, setMessages] = useState([])
 	const [typingMessage, setTypingMessage] = useState("")
@@ -44,13 +49,15 @@ function HomePage() {
 	})
 
 	return (
-		<div>
-			<Button className="btn-show-chats" variant="outline-primary" onClick={() => setOffcanvasVisible(true)}>
+		<div >
+			<Button className="btn-show-chats" variant="primary" onClick={() => setOffcanvasVisible(true)}>
 				Show Chats {''} <Badge bg="success">1</Badge>
 			</Button>
       <hr/>
 
-      <SpeechBubble></SpeechBubble>
+		<ChatCardHeader></ChatCardHeader>
+	  <SpeechBubbleReceived/>
+	  <SpeechBubbleSent/>
       
 			<Offcanvas  show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
 				<Offcanvas.Header closeButton>

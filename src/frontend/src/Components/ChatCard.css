@@ -20,3 +20,16 @@
     box-shadow: 0 4px 8px 0 rgba(2,0,0,0.2);
 
 }
+
+.chat-header{
+    padding: 10px;
+    box-shadow: 0px 0px 3px #5f77ff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header{
+    font-size: 20px;
+}

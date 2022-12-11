@@ -8,7 +8,11 @@ function ChatCard(props) {
   return (
     <div >
     <Card style={{width:'inherit'}}>
-    <div><Card.Header><img style={{width:'30px', marginRight:'6px'}} src={usericon}></img> {props.name} </Card.Header></div>
+    <div> 
+    <Card.Header style={{display:'flex', alignItems:'center'}}>
+    <img style={{width:'30px', marginRight:'6px', textAlign:'center'}} src={usericon}></img> {props.name} 
+    </Card.Header>
+    </div>
       <Card.Body style={{cursor:'pointer'}} onClick={() => alert("Hello from here")}>
       <small className='chat-message'>{props.message}</small>
       </Card.Body>
