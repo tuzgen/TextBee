@@ -11,9 +11,6 @@ import LoginPage from './Pages/LoginPage';
 import HomePage from './Pages/HomePage';
 import ChatPreviews from './Pages/ChatPreviews';
 
-
-// const socket = io("http://localhost:3001")
-
 function App() {
 
   const [token, setToken] = useState();
@@ -29,6 +26,7 @@ function App() {
     <Routes>
       <Route path="/chats" element={<ChatPreviews/>} />
 
+      <Route path="/home" element={<HomePage/>} />
     </Routes>
    </Router>
 
