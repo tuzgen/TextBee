@@ -16,6 +16,8 @@ app.use('/login', (req, res) => {
 
 const server = http.createServer(app);
 
+
+//Frontend on origin: "http://localhost:3000"
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -33,5 +35,5 @@ io.on("connection", (socket) => {
 })
 
 server.listen(3001, () => {
-  console.log('listening on *:3000');
+  console.log('listening on *:3001');
 });
