@@ -12,20 +12,16 @@ import HomePage from './Pages/HomePage';
 import ChatPreviews from './Pages/ChatPreviews';
 
 
-const socket = io("http://localhost:3001")
-
-
-
+// const socket = io("http://localhost:3001")
 
 function App() {
 
   const [token, setToken] = useState();
 
-  //if(!token) {
-    //return <LoginPage setToken={setToken} />
- // }
+  // if(!token) {
+  //   return <LoginPage setToken={setToken} />
+  // }
 
-  
   return (
     <div className="App">
    
