@@ -8,16 +8,12 @@ async function authenticateToken(req, res, next) {
 	// bearer token
 	const token = authHeader && authHeader.split(" ")[1]
 	const { username, password } = req.body
-  findAllUsers(username).then((error, result) => {
-    console.log("error", error)
+  findAllUsers(username).then((result, error) => {
     if (error)
       return res.sendStatus(400)
-    console.log(!result)
-    if (!result)
-      return res.sendStatus(404)
-
     const user = result.rows[0]
-    console.log(user)
+    if (!user)
+      return res.sendStatus(404)
 
     if (token == null) {
       if (!(bcrypt.compareSync(password, user.password)))
