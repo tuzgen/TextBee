@@ -8,12 +8,13 @@ import "./HomePage.css"
 import io from "socket.io-client"
 import ChatPreviews from "./ChatPreviews"
 import SpeechBubble from "../Components/SpeechBubbleOther"
+import Cookies from "universal-cookie"
 
 import ChatBarPrivate from "../Components/ChatBarPrivate"
 import ChatBarGroup from "../Components/ChatBarGroup"
 
 const connection = io("http://localhost:3001")
-var id = -1
+const { username, token } = new Cookies().getAll()
 
 connection.on("connect", (socket) => {
 	console.log("Connected!")
@@ -27,18 +28,14 @@ function HomePage() {
 	function onMessageSend(e) {
 		e.preventDefault()
 		// send message
-		const data = { sender: id, message: typingMessage }
+		const data = { sender: username, message: typingMessage }
 		setMessages([...messages, data])
 		connection.emit("messageSent", data)
 		setTypingMessage("")
 	}
 
-	connection.on("assignId", (_id) => {
-		id = _id
-	})
-
 	connection.on("userConnected", (socket) => {
-		setMessages([...messages, { sender: -1, message: "new connection" }])
+		setMessages([...messages, { sender: "server", message: "new connection" }])
 	})
 
 	// receive message
