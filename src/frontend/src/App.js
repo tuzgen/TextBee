@@ -11,22 +11,16 @@ import LoginPage from './Pages/LoginPage';
 import HomePage from './Pages/HomePage';
 
 
-const socket = io("http://localhost:3001")
-
-
-
+// const socket = io("http://localhost:3001")
 
 function App() {
 
   const [token, setToken] = useState();
 
-  if(!token) {
-    return <LoginPage setToken={setToken} />
-  }
+  // if(!token) {
+  //   return <LoginPage setToken={setToken} />
+  // }
 
-  socket.on("connect", () => {
-    console.log("Connected!")
-  })
   return (
     <div className="App">
    
