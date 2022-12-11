@@ -2,9 +2,10 @@
 const express = require('express');
 const app = express();
 const http = require('http');
-const {Server} = require('socket.io')
+const { Server } = require('socket.io')
 const cors = require("cors");
 const { log } = require('console');
+const { isBoxedPrimitive } = require('util/types');
 
 app.use(cors())
 
@@ -30,8 +31,12 @@ app.get('/', (req, res) => {
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
+  socket.broadcast.emit("userConnected")
 })
 
+// io.on("messageSent", (socket) => {
+// })
+
 server.listen(3001, () => {
-  console.log('listening on *:3000');
+  console.log('listening on *:3001');
 });

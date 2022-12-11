@@ -10,9 +10,6 @@ import { useState } from 'react';
 import LoginPage from './Pages/LoginPage';
 import HomePage from './Pages/HomePage';
 
-
-// const socket = io("http://localhost:3001")
-
 function App() {
 
   const [token, setToken] = useState();
