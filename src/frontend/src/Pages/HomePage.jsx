@@ -61,8 +61,6 @@ function HomePage() {
 			<hr />
 
 			<ChatCardHeader></ChatCardHeader>
-			<SpeechBubbleReceived />
-			<SpeechBubbleSent />
 
 			<Offcanvas show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
 				<Offcanvas.Header closeButton>
@@ -80,9 +78,13 @@ function HomePage() {
 				</OffcanvasBody>
 			</Offcanvas>
 			<ul id="messages">
-				{messages.map((message) => (
-					<li>{`${new Date(message.sentAt).toTimeString().split(' ')[0]} ${message.sender}: ${message.message}`}</li>
-				))}
+				{messages.map((message) => {
+					if (message.sender === username) {
+						return <SpeechBubbleSent sentAt={message.sentAt} sender={message.sender} message={message.message} />
+					} else {
+						return <SpeechBubbleReceived sentAt={message.sentAt} sender={message.sender} message={message.message} />
+					}
+				})}
 				<div ref={messagesEndRef}></div>
 			</ul>
 			<form id="form" action="" onSubmit={onMessageSend}>
