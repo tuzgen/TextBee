@@ -5,6 +5,7 @@ import Cookies from "universal-cookie"
 import "./LoginPage.css"
 import PropTypes from "prop-types"
 import { useEffect } from "react"
+import LoginError from "../Components/LoginError"
 
 const cookies = new Cookies()
 
@@ -38,6 +39,7 @@ function LoginPage({ setToken }) {
 					return res.json()
 				} catch (error) {
 					console.log(error)
+          return(<div><LoginError></LoginError></div>);
 				}
 			})
 			.then((token) => {
