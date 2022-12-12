@@ -37,16 +37,15 @@ function HomePage() {
 	function onMessageSend(e) {
 		e.preventDefault()
 		// send message
-		if (!typingMessage.trim())
-			return
-		const data = { sender: username, message: typingMessage }
+		if (!typingMessage.trim()) return
+		const data = { sentAt: Date.now(), sender: username, message: typingMessage }
 		setMessages([...messages, data])
 		connection.emit("messageSent", data)
 		setTypingMessage("")
 	}
 
 	connection.on("userConnected", (socket) => {
-		setMessages([...messages, { sender: "server", message: "new connection" }])
+		setMessages([...messages, { sentAt: Date.now(), sender: "server", message: "new connection" }])
 	})
 
 	// receive message
@@ -82,9 +81,9 @@ function HomePage() {
 			</Offcanvas>
 			<ul id="messages">
 				{messages.map((message) => (
-					<li>{`${message.sender}: ${message.message}`}</li>
+					<li>{`${new Date(message.sentAt).toTimeString().split(' ')[0]} ${message.sender}: ${message.message}`}</li>
 				))}
-			<div ref={messagesEndRef}></div>
+				<div ref={messagesEndRef}></div>
 			</ul>
 			<form id="form" action="" onSubmit={onMessageSend}>
 				<input id="input" value={typingMessage} onChange={(e) => setTypingMessage(e.target.value)} autoComplete="off" />
