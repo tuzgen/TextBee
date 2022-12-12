@@ -14,6 +14,8 @@ import ChatBarPrivate from "../Components/ChatBarPrivate"
 import ChatBarGroup from "../Components/ChatBarGroup"
 import ChatCardHeader from "../Components/ChatCardHeader"
 import SpeechBubbleSent from "../Components/SpeechBubbleSent"
+import { useEffect } from "react"
+import { useRef } from "react"
 
 const connection = io("http://localhost:3001")
 const { username, token } = new Cookies().getAll()
@@ -23,24 +25,27 @@ connection.on("connect", (socket) => {
 })
 
 function HomePage() {
-
-
-
+	const messagesEndRef = useRef(null)
 	const [offcanvasVisible, setOffcanvasVisible] = useState(false)
 	const [messages, setMessages] = useState([])
 	const [typingMessage, setTypingMessage] = useState("")
 
+	useEffect(() => {
+		messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+	}, [messages])
+
 	function onMessageSend(e) {
 		e.preventDefault()
 		// send message
-		const data = { sender: username, message: typingMessage }
+		if (!typingMessage.trim()) return
+		const data = { sentAt: Date.now(), sender: username, message: typingMessage }
 		setMessages([...messages, data])
 		connection.emit("messageSent", data)
 		setTypingMessage("")
 	}
 
 	connection.on("userConnected", (socket) => {
-		setMessages([...messages, { sender: "server", message: "new connection" }])
+		setMessages([...messages, { sentAt: Date.now(), sender: "server", message: "new connection" }])
 	})
 
 	// receive message
@@ -49,17 +54,17 @@ function HomePage() {
 	})
 
 	return (
-		<div >
+		<div>
 			<Button className="btn-show-chats" variant="primary" onClick={() => setOffcanvasVisible(true)}>
-				Show Chats {''} <Badge bg="success">1</Badge>
+				Show Chats {""} <Badge bg="success">1</Badge>
 			</Button>
 			<hr />
 
-		<ChatCardHeader></ChatCardHeader>
-	  <SpeechBubbleReceived/>
-	  <SpeechBubbleSent/>
-      
-			<Offcanvas  show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
+			<ChatCardHeader></ChatCardHeader>
+			<SpeechBubbleReceived />
+			<SpeechBubbleSent />
+
+			<Offcanvas show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
 				<Offcanvas.Header closeButton>
 					<Offcanvas.Title>Disturd 💩</Offcanvas.Title>
 				</Offcanvas.Header>
@@ -86,6 +91,10 @@ function HomePage() {
 				}
 					
 				)}
+				{messages.map((message) => (
+					<li>{`${new Date(message.sentAt).toTimeString().split(' ')[0]} ${message.sender}: ${message.message}`}</li>
+				))}
+				<div ref={messagesEndRef}></div>
 			</ul>
 			<form id="form" action="" onSubmit={onMessageSend}>
 				<input id="input" value={typingMessage} onChange={(e) => setTypingMessage(e.target.value)} autoComplete="off" />
