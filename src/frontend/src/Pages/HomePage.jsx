@@ -75,9 +75,17 @@ function HomePage() {
 				</OffcanvasBody>
 			</Offcanvas>
 			<ul id="messages">
-				{messages.map((message) => (
-					<li>{`${message.sender}: ${message.message}`}</li>
-				))}
+				{messages.map((message) => {
+					if (message.sender === username) {
+						<li> <SpeechBubbleSent name={message.sender} message={message.message}/> </li>
+
+					}
+					else {
+
+					}
+				}
+					
+				)}
 			</ul>
 			<form id="form" action="" onSubmit={onMessageSend}>
 				<input id="input" value={typingMessage} onChange={(e) => setTypingMessage(e.target.value)} autoComplete="off" />
