@@ -22,13 +22,13 @@ const { username, token } = new Cookies().getAll()
 
 connection.on("connect", (socket) => {
 	console.log("Connected!")
-	connection.emit('username', username)
+	connection.emit("username", username)
 })
 
 function HomePage() {
 	const messagesEndRef = useRef(null)
 	const [conversations, setConversations] = useState([])
-	const [currentChat, setCurrentChat] = useState('')
+	const [currentChat, setCurrentChat] = useState("")
 	const [offcanvasVisible, setOffcanvasVisible] = useState(false)
 	const [messages, setMessages] = useState([])
 	const [typingMessage, setTypingMessage] = useState("")
@@ -46,13 +46,15 @@ function HomePage() {
 
 	// receive from socket server
 	connection.on("message", (messages) => {
-		setMessages(messages.map((message) => {
-			return {
-				sentAt: message.timestamp,
-				sender: message.sender,
-				message: message.content,
-			}
-		}))
+		setMessages(
+			messages.map((message) => {
+				return {
+					sentAt: message.timestamp,
+					sender: message.sender,
+					message: message.content,
+				}
+			})
+		)
 	})
 
 	function onMessageSend(e) {
@@ -79,8 +81,7 @@ function HomePage() {
 
 	// receive message
 	connection.on("messageSent", ({ conversationId, message }) => {
-		if (currentChat === conversationId )
-			setMessages([...messages, message])
+		if (currentChat === conversationId) setMessages([...messages, message])
 	})
 
 	return (
@@ -94,7 +95,7 @@ function HomePage() {
 
 			<Offcanvas show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
 				<Offcanvas.Header closeButton>
-					<Offcanvas.Title>Disturd 💩</Offcanvas.Title>
+					<Offcanvas.Title>TextBee 🐝</Offcanvas.Title>
 				</Offcanvas.Header>
 				<OffcanvasBody>
 					<div style={{ display: "flex", gap: "10px" }}>
@@ -107,7 +108,7 @@ function HomePage() {
 					</div>
 				</OffcanvasBody>
 			</Offcanvas>
-			<ul id="messages" >
+			<ul id="messages">
 				{messages.map((message) => {
 					if (message.sender === username) {
 						return <SpeechBubbleSent sentAt={message.sentAt} sender={message.sender} message={message.message} />

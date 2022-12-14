@@ -54,7 +54,7 @@ async function findMessagesOfConversation(conversationId) {
     }
   })
 
-  return result.hits.hits.map((hit) => hit._source).sort((a, b) => b.timestamp - a.timestamp)
+  return result.hits.hits.map((hit) => hit._source).sort((a, b) => a.timestamp - b.timestamp)
 }
 
 async function createConversation(conversation) {
