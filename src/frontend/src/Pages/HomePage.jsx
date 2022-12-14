@@ -37,6 +37,15 @@ function HomePage() {
 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
 	}, [messages])
 
+	useEffect(() => {
+		// todo set messages
+		// send to socket server
+
+		// receive from socket server
+
+		// call set messages
+	}, [currentChat])
+
 	function onMessageSend(e) {
 		e.preventDefault()
 		// send message
@@ -85,7 +94,7 @@ function HomePage() {
 					<hr />
 
 					<div style={{ display: "flex" }}>
-						<ChatPreviews conversations={conversations}></ChatPreviews>
+						<ChatPreviews conversations={conversations} onClick={setCurrentChat}></ChatPreviews>
 					</div>
 				</OffcanvasBody>
 			</Offcanvas>
