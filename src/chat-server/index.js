@@ -3,8 +3,9 @@ const app = express()
 const http = require("http")
 const { Server } = require("socket.io")
 const cors = require("cors")
-const { log } = require("console")
-const { isBoxedPrimitive } = require("util/types")
+const axios = require('axios')
+
+const { findConversationsOfUser } = require('./requests')
 
 app.use(cors())
 
@@ -21,23 +22,26 @@ const io = new Server(server, {
 app.get("/", (req, res) => {
 	res.send("<h1>Hello world</h1>")
 })
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
 	console.log(`User connected: ${socket.id}`)
 
-	socket.broadcast.emit("userConnected")
-
 	// here receive message from socket, username or id of the connected user
+	socket.on('username', async (username) => {
+		// fetch friends or active chatrooms of user
+		const conversations = await findConversationsOfUser(username)
+		socket.emit("conversation", conversations)
+		conversations.forEach((conversation) => {
+			// connect user to socket.io rooms
+			socket.join(conversation.id)
+			socket.to(conversation.id).emit("userConnected", {username})
+		})
 
-	// fetch friends or active chatrooms of user
-
-	// connect user to socket.io rooms
-
-	socket.join("room")
-
-	socket.on("messageSent", (args) => {
-		socket.to("room").emit("messageSent", args)
-		// socket.broadcast.emit("messageSent", args)
+		socket.on("messageSent", ({conversationId, message}) => {
+			socket.to(conversationId).emit("messageSent", { conversationId, message })
+			// socket.broadcast.emit("messageSent", args)
+		})
 	})
+
 })
 
 server.listen(3001, () => {

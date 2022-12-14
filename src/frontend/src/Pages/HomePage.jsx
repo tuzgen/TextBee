@@ -22,10 +22,13 @@ const { username, token } = new Cookies().getAll()
 
 connection.on("connect", (socket) => {
 	console.log("Connected!")
+	connection.emit('username', username)
 })
 
 function HomePage() {
 	const messagesEndRef = useRef(null)
+	const [conversations, setConversations] = useState([])
+	const [currentChat, setCurrentChat] = useState('')
 	const [offcanvasVisible, setOffcanvasVisible] = useState(false)
 	const [messages, setMessages] = useState([])
 	const [typingMessage, setTypingMessage] = useState("")
@@ -38,19 +41,28 @@ function HomePage() {
 		e.preventDefault()
 		// send message
 		if (!typingMessage.trim()) return
-		const data = { sentAt: Date.now(), sender: username, message: typingMessage }
-		setMessages([...messages, data])
-		connection.emit("messageSent", data)
+		const message = { sentAt: Date.now(), sender: username, message: typingMessage }
+		setMessages([...messages, message])
+		connection.emit("messageSent", { conversationId: currentChat, message })
 		setTypingMessage("")
 	}
+
+	connection.on("conversation", (conversations) => {
+		conversations.forEach((conversation) => {
+			conversation.users = conversation.users.filter((u) => u !== username)
+		})
+		setConversations([...conversations])
+		setCurrentChat(conversations[0].id)
+	})
 
 	connection.on("userConnected", (socket) => {
 		setMessages([...messages, { sentAt: Date.now(), sender: "server", message: "new connection" }])
 	})
 
 	// receive message
-	connection.on("messageSent", (data) => {
-		setMessages([...messages, data])
+	connection.on("messageSent", ({ conversationId, message }) => {
+		if (currentChat === conversationId )
+			setMessages([...messages, message])
 	})
 
 	return (
@@ -73,7 +85,7 @@ function HomePage() {
 					<hr />
 
 					<div style={{ display: "flex" }}>
-						<ChatPreviews></ChatPreviews>
+						<ChatPreviews conversations={conversations}></ChatPreviews>
 					</div>
 				</OffcanvasBody>
 			</Offcanvas>
