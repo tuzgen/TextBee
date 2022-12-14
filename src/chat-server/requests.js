@@ -7,4 +7,21 @@ async function findConversationsOfUser(username) {
   return result
 }
 
-module.exports = { findConversationsOfUser }
+async function retrieveChatMessages(conversation_id) {
+  try {
+    const res = await axios.get(`http://localhost:3005/message/${conversation_id}`)
+    return res.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+async function createChatMessage(message) {
+  const { conversation_id, conversation_participants, sender, content, timestamp } = message
+
+  const res = await axios.post(`http://localhost:3005/message`, {
+    conversation_id, conversation_participants, sender, content, timestamp
+  })
+}
+
+module.exports = { findConversationsOfUser, retrieveChatMessages, createChatMessage }

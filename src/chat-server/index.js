@@ -3,9 +3,9 @@ const app = express()
 const http = require("http")
 const { Server } = require("socket.io")
 const cors = require("cors")
-const axios = require('axios')
+const axios = require("axios")
 
-const { findConversationsOfUser } = require('./requests')
+const { findConversationsOfUser, createChatMessage, retrieveChatMessages } = require("./requests")
 
 app.use(cors())
 
@@ -23,25 +23,28 @@ app.get("/", (req, res) => {
 	res.send("<h1>Hello world</h1>")
 })
 io.on("connection", async (socket) => {
-	console.log(`User connected: ${socket.id}`)
-
 	// here receive message from socket, username or id of the connected user
-	socket.on('username', async (username) => {
+	socket.on("username", async (username) => {
 		// fetch friends or active chatrooms of user
 		const conversations = await findConversationsOfUser(username)
 		socket.emit("conversation", conversations)
 		conversations.forEach((conversation) => {
 			// connect user to socket.io rooms
 			socket.join(conversation.id)
-			socket.to(conversation.id).emit("userConnected", {username})
+			socket.to(conversation.id).emit("userConnected", { username })
 		})
 
-		socket.on("messageSent", ({conversationId, message}) => {
+		socket.on("message", async (conversationId) => {
+			const messages = await retrieveChatMessages(conversationId)
+			socket.emit("message", messages)
+		})
+
+		socket.on("messageSent", async ({ conversationId, message }) => {
+			const conversation = conversations.find((conversation) => conversation.id === conversationId)
+			createChatMessage({ conversation_id: conversationId, conversation_participants: conversation.users, content: message, timestamp: Date.now() })
 			socket.to(conversationId).emit("messageSent", { conversationId, message })
-			// socket.broadcast.emit("messageSent", args)
 		})
 	})
-
 })
 
 server.listen(3001, () => {

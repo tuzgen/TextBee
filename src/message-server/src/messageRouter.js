@@ -3,7 +3,7 @@ const { v4 } = require("uuid")
 
 const auth = require("./authMiddleware")
 
-const { createConversation, createMessage, deleteConversations, findConversationsOfUser } = require('./database/elastic')
+const { createConversation, createMessage, deleteConversations, findConversationsOfUser, findMessagesOfConversation } = require('./database/elastic')
 
 const router = new express.Router()
 
@@ -13,6 +13,14 @@ router.get('/conversation/:username', async (req, res) => {
   const conversations = await findConversationsOfUser(username)
 
   res.status(200).send(conversations)
+})
+
+router.get('/message/:conversationId', async (req, res) => {
+  const { conversationId } = req.params
+
+  const messages = await findMessagesOfConversation(conversationId)
+
+  res.status(200).send(messages)
 })
 
 /**
@@ -25,7 +33,7 @@ router.post("/conversation", async (req, res) => {
 	const conversation = {
 		id: v4(),
 		lastMessage: "",
-		lastMessageTimestamp: Date.now(),
+		lastMessageTimestamp: 0,
 		...req.body,
 	}
 
@@ -53,6 +61,8 @@ router.post("/message", async (req, res) => {
 		id: v4(),
 		...req.body,
 	}
+  await createMessage(message)
+  res.status(201).send(message)
 })
 
 router.delete("/conversation", async (req, res) => {

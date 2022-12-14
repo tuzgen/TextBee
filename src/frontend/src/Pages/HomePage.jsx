@@ -38,13 +38,22 @@ function HomePage() {
 	}, [messages])
 
 	useEffect(() => {
-		// todo set messages
 		// send to socket server
-
-		// receive from socket server
+		connection.emit("message", currentChat)
 
 		// call set messages
 	}, [currentChat])
+
+	// receive from socket server
+	connection.on("message", (messages) => {
+		setMessages(messages.map((message) => {
+			return {
+				sentAt: message.timestamp,
+				sender: message.sender,
+				message: message.content,
+			}
+		}))
+	})
 
 	function onMessageSend(e) {
 		e.preventDefault()

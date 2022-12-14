@@ -44,6 +44,19 @@ async function findConversationsOfUser(username) {
 	return result.hits.hits.map((hit) => hit._source).sort((a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp)
 }
 
+async function findMessagesOfConversation(conversationId) {
+  const result = await client.search({
+    index: "message",
+    query: {
+      match: {
+        conversation_id: conversationId
+      }
+    }
+  })
+
+  return result.hits.hits.map((hit) => hit._source).sort((a, b) => b.timestamp - a.timestamp)
+}
+
 async function createConversation(conversation) {
 	// assume request body returns correct user names
 	const userCount = conversation.users.length
@@ -77,6 +90,23 @@ async function createMessage(message) {
 		index: "message",
 		document: { ...message },
 	})
+  const result = await client.search({
+    index: "conversation",
+    query: {
+      match: {
+        id: message.conversation_id
+      }
+    }
+  })
+  const conversationId = result.hits.hits[0]._id
+  await client.update({
+    index: "conversation",
+    id: conversationId,
+    doc: {
+      lastMessage: message.content,
+      lastMessageTimestamp: message.timestamp
+    }
+  })
 	await client.indices.refresh({ index: "message" })
 }
 
@@ -90,4 +120,4 @@ async function deleteConversations() {
   await initializeIndices()
 }
 
-module.exports = { createConversation, createMessage, deleteConversations, findConversationsOfUser }
+module.exports = { createConversation, createMessage, deleteConversations, findConversationsOfUser, findMessagesOfConversation }
