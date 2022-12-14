@@ -98,7 +98,7 @@ function HomePage() {
 					</div>
 				</OffcanvasBody>
 			</Offcanvas>
-			<ul id="messages">
+			<ul id="messages" >
 				{messages.map((message) => {
 					if (message.sender === username) {
 						return <SpeechBubbleSent sentAt={message.sentAt} sender={message.sender} message={message.message} />

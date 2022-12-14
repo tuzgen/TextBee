@@ -10,6 +10,7 @@ import Cookies from 'universal-cookie'
 function App() {
 	const [token, setToken] = useState(new Cookies().get('token') || "")
 
+	
 	if (!token) {
 		return <LoginPage setToken={setToken} />
 	}
