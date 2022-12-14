@@ -21,14 +21,22 @@ const io = new Server(server, {
 app.get("/", (req, res) => {
 	res.send("<h1>Hello world</h1>")
 })
-
 io.on("connection", (socket) => {
 	console.log(`User connected: ${socket.id}`)
 
 	socket.broadcast.emit("userConnected")
 
+	// here receive message from socket, username or id of the connected user
+
+	// fetch friends or active chatrooms of user
+
+	// connect user to socket.io rooms
+
+	socket.join("room")
+
 	socket.on("messageSent", (args) => {
-		socket.broadcast.emit("messageSent", args)
+		socket.to("room").emit("messageSent", args)
+		// socket.broadcast.emit("messageSent", args)
 	})
 })
 
