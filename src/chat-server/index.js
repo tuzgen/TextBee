@@ -39,9 +39,9 @@ io.on("connection", async (socket) => {
 			socket.emit("message", messages)
 		})
 
-		socket.on("messageSent", async ({ conversationId, message }) => {
+		socket.on("messageSent", async ({ conversationId, message, sender }) => {
 			const conversation = conversations.find((conversation) => conversation.id === conversationId)
-			createChatMessage({ conversation_id: conversationId, conversation_participants: conversation.users, content: message, timestamp: Date.now() })
+			createChatMessage({ conversation_id: conversationId, conversation_participants: conversation.users, sender: message.sender, content: message.message, timestamp: message.sentAt })
 			socket.to(conversationId).emit("messageSent", { conversationId, message })
 		})
 	})
