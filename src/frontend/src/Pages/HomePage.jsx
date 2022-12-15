@@ -9,6 +9,7 @@ import io from "socket.io-client"
 import ChatPreviews from "./ChatPreviews"
 import SpeechBubbleReceived from "../Components/SpeechBubbleOther"
 import Cookies from "universal-cookie"
+// import EmojiPicker from 'emoji-picker-react'
 
 import ChatBarPrivate from "../Components/ChatBarPrivate"
 import ChatBarGroup from "../Components/ChatBarGroup"
@@ -57,6 +58,20 @@ function HomePage() {
 		)
 	})
 
+	function createConversation(users) {
+		console.log(users)
+		connection.emit("createConversation", users)
+	}
+
+	function getChatUsers(conversationId) {
+		console.log(conversationId, currentChat)
+		const conversation = conversations.find((conversation) => conversation.id === conversationId)
+		if (conversation)
+			return conversation.users
+		else
+			return ["No conversation"]
+	}
+
 	function onMessageSend(e) {
 		e.preventDefault()
 		// send message
@@ -75,14 +90,15 @@ function HomePage() {
 		setCurrentChat(conversations[0].id)
 	})
 
-	connection.on("userConnected", (socket) => {
-		setMessages([...messages, { sentAt: Date.now(), sender: "server", message: "new connection" }])
-	})
-
 	// receive message
 	connection.on("messageSent", ({ conversationId, message }) => {
 		if (currentChat === conversationId) setMessages([...messages, message])
 	})
+
+	connection.on("conversationCreated", (conversation) => {
+		// setConversations(...conversations, conversation)
+	})
+	console.log(getChatUsers(currentChat))
 
 	return (
 		<div>
@@ -91,7 +107,7 @@ function HomePage() {
 			</Button>
 			<hr />
 
-			<ChatCardHeader></ChatCardHeader>
+			<ChatCardHeader users={getChatUsers(currentChat)} ></ChatCardHeader>
 
 			<Offcanvas show={offcanvasVisible} backdrop="false" onHide={() => setOffcanvasVisible(false)}>
 				<Offcanvas.Header closeButton>
@@ -99,7 +115,7 @@ function HomePage() {
 				</Offcanvas.Header>
 				<OffcanvasBody>
 					<div style={{ display: "flex", gap: "10px" }}>
-						<ChatBarPrivate /> <ChatBarGroup />
+						<ChatBarPrivate createConversation={createConversation} loggedInUser={username}/> <ChatBarGroup />
 					</div>
 					<hr />
 

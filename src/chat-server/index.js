@@ -5,7 +5,7 @@ const { Server } = require("socket.io")
 const cors = require("cors")
 const axios = require("axios")
 
-const { findConversationsOfUser, createChatMessage, retrieveChatMessages } = require("./requests")
+const { findConversationsOfUser, createChatMessage, retrieveChatMessages, createConversation } = require("./requests")
 
 app.use(cors())
 
@@ -31,7 +31,11 @@ io.on("connection", async (socket) => {
 		conversations.forEach((conversation) => {
 			// connect user to socket.io rooms
 			socket.join(conversation.id)
-			socket.to(conversation.id).emit("userConnected", { username })
+		})
+
+		socket.on("createConversation", async (users) => {
+			const newConvo = await createConversation(users)
+			socket.emit('conversationCreated', newConvo)
 		})
 
 		socket.on("message", async (conversationId) => {

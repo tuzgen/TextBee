@@ -4,7 +4,8 @@ import Modal from 'react-bootstrap/Modal';
 import editicon from "../assets/chat-edit.svg"
 import addgroupicon from "../assets/group-add.svg"
 
-function ChatBarGroup() {
+function ChatBarGroup({ createConversation, loggedInUser }) {
+  const [username, setUsername] = useState('')
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
