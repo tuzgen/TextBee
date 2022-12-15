@@ -12,7 +12,6 @@ import Cookies from "universal-cookie"
 // import EmojiPicker from 'emoji-picker-react'
 
 import ChatBarPrivate from "../Components/ChatBarPrivate"
-import ChatBarGroup from "../Components/ChatBarGroup"
 import ChatCardHeader from "../Components/ChatCardHeader"
 import SpeechBubbleSent from "../Components/SpeechBubbleSent"
 import { useEffect } from "react"
@@ -59,7 +58,6 @@ function HomePage() {
 	})
 
 	function createConversation(users) {
-		console.log(users)
 		connection.emit("createConversation", users)
 	}
 
@@ -95,11 +93,6 @@ function HomePage() {
 		if (currentChat === conversationId) setMessages([...messages, message])
 	})
 
-	connection.on("conversationCreated", (conversation) => {
-		// setConversations(...conversations, conversation)
-	})
-	console.log(getChatUsers(currentChat))
-
 	return (
 		<div>
 			<Button className="btn-show-chats" variant="primary" onClick={() => setOffcanvasVisible(true)}>
@@ -115,7 +108,7 @@ function HomePage() {
 				</Offcanvas.Header>
 				<OffcanvasBody>
 					<div style={{ display: "flex", gap: "10px" }}>
-						<ChatBarPrivate createConversation={createConversation} loggedInUser={username}/> <ChatBarGroup />
+						<ChatBarPrivate createConversation={createConversation} loggedInUser={username}/>
 					</div>
 					<hr />
 

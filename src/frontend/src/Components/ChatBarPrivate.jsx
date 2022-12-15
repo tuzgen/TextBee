@@ -30,7 +30,7 @@ function ChatBarPrivate({ createConversation, loggedInUser }) {
 				<Modal.Body>
 					<Form>
 						<Form.Label>Search</Form.Label>
-						<Form.Control type="text" onChange={(e) => setUsername(e.target.value)} placeholder="Username..." />
+						<Form.Control type="text" onChange={(e) => setUsername(e.target.value)} placeholder="Username or comma separated list" />
 					</Form>
 				</Modal.Body>
 				<Modal.Footer>
@@ -40,7 +40,6 @@ function ChatBarPrivate({ createConversation, loggedInUser }) {
 					<Button
 						variant="primary"
 						onClick={() => {
-              console.log(username)
 							if (username.includes(",")) {
 								createConversation([...(username.split(",")), loggedInUser])
 							} else {

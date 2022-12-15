@@ -3,7 +3,6 @@ const express = require("express")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 
-const db = require("../database/connection")
 const auth = require("../middleware/auth")
 const { createUser } = require('../database/queries')
 
