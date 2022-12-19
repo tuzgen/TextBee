@@ -59,6 +59,7 @@ function HomePage() {
 
 	function createConversation(users) {
 		connection.emit("createConversation", users)
+		setOffcanvasVisible(false)
 	}
 
 	function getChatUsers(conversationId) {
@@ -98,6 +99,9 @@ function HomePage() {
 			<Button className="btn-show-chats" variant="primary" onClick={() => setOffcanvasVisible(true)}>
 				Show Chats {""} <Badge bg="success">1</Badge>
 			</Button>
+			<h2 style={{
+				textAlign: "right"
+			}}>{username}</h2>
 			<hr />
 
 			<ChatCardHeader users={getChatUsers(currentChat)} ></ChatCardHeader>
@@ -113,7 +117,10 @@ function HomePage() {
 					<hr />
 
 					<div style={{ display: "flex" }}>
-						<ChatPreviews conversations={conversations} onClick={setCurrentChat}></ChatPreviews>
+						<ChatPreviews conversations={conversations} onClick={(newCurrentChat) => {
+							setCurrentChat(newCurrentChat)
+							setOffcanvasVisible(false)
+						}}></ChatPreviews>
 					</div>
 				</OffcanvasBody>
 			</Offcanvas>

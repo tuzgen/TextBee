@@ -8,13 +8,18 @@ async function findConversationsOfUser(username) {
 }
 
 async function createConversation(users) {
-	const res = await axios.post(`http://localhost:3005/conversation`, {
-		users: users
-	})
+	try {
+		const res = await axios.post(`http://localhost:3005/conversation`, {
+			users: users
+		})
 
-	const result = res.data
-	console.log(result)
-	return result
+		const result = res.data
+		console.log(result)
+		return result
+	} catch(e) {
+		return null
+		console.log(e)
+	}
 }
 
 async function retrieveChatMessages(conversation_id) {

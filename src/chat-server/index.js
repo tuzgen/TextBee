@@ -35,6 +35,9 @@ io.on("connection", async (socket) => {
 
 		socket.on("createConversation", async (users) => {
 			const newConvo = await createConversation(users)
+			if (!newConvo) {
+				return
+			}
 			socket.emit('conversationCreated', newConvo)
 		})
 
